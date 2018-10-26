@@ -1,11 +1,16 @@
+from urllib import parse
+
 from bs4 import BeautifulSoup
 import requests
 import os
+
 
 # HTML 파일을 저장하거나 불러올 경로
 file_path = 'data/epsode_list.html'
 # HTTP 요청을 보낼 주소
 url_episode_list = 'https://comic.naver.com/webtoon/list.nhn'
+
+
 # HTTP 요청시 전달할 GET Parameters
 params = {
     'titleId' : 626907,
@@ -44,8 +49,28 @@ for index, tr in enumerate(tr_list[1:]):
     # 현재 순회중인 tr 요소가 클래스 속성값을 가진다면 continue
     if tr.get('class'):
         continue
-    print('==== {} ====\n{}\n'.format(index, tr))
+    # 현재 tr 의 첫 번째 td 요소의 하위 img 태그의 'src' 속성값
+    url_thumbnail = tr.select_one('td:nth-of-type(1) img').get('src')
+    # 현재 tr 의 첫 번째 td 요소의 자식 a 태그의 'href'속성값
+    url_detail = tr.select_one('td:nth-of-type(1) > a').get('href')
+    # url_parse = parse.urlsplit(url_detail)
+    # url_parse_qs = dict(parse.parse_qsl(parse.urlsplit(url_detail).query))
+    # url_numbers = url_parse_qs.get('no')
+    query = parse.urlsplit(url_detail).query
+    query_dict = parse.parse_qs(query)
+    no = query_dict['no'][0]
 
-print(title)
-print(author)
-print(desc)
+    # 현재 tr 의 두 번째 td 요소의 자식 a 요소의 내용
+    title = tr.select_one('td:nth-of-type(2) > a').get_text(strip=True)
+    # 현재 tr 의 세 번째 td 요소의 하위 strong 태그 내용
+    rating = tr.select_one('td:nth-of-type(3) strong').get_text(strip=True)
+    # 현재 tr 의 네 번째 td 요소의 내용
+    created_date = tr.select_one('td:nth-of-type(4)').get_text(strip=True)
+
+    # print(url_thumbnail)
+    # print(url_detail)
+    # print(url_parse_qs)
+    print(no)
+    # print(title)
+    # print(rating)
+    # print(created_date)
