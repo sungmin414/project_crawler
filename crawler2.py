@@ -32,7 +32,7 @@ class Webtoon:
         title = h2_title.contents[0].strip()
         author = h2_title.contents[1].get_text(strip=True)
         desc = soup.select_one('div.detail > p').get_text(strip=True)
-        webtoon_dict ={
+        webtoon_dict = {
             'title': title,
             'author': author,
             'desc': desc,
